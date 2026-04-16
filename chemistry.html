@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光榮歲月 V4 | 三重光榮國小電影敘事專案</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400&family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cinematic-black: #050505;
+            --cinematic-gold: #d4af37;
+            --cinematic-white: #e6e6e6;
+            --paper-white: #f8f8f8;
+            /* 圖片路徑變數 - 已轉換為 Raw 格式 */
+            --photo-1: url('https://raw.githubusercontent.com/JackChung-Taiwan/school/main/photo1');
+            --photo-2: url('https://raw.githubusercontent.com/JackChung-Taiwan/school/main/photo2.jpg');
+            --photo-3: url('https://raw.githubusercontent.com/JackChung-Taiwan/school/main/photo3.jpg');
+            --photo-4: url('https://raw.githubusercontent.com/JackChung-Taiwan/school/main/photo4.jpg');
+            --photo-5: url('https://raw.githubusercontent.com/JackChung-Taiwan/school/main/photo5.jpg');
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--cinematic-black);
+            color: var(--cinematic-white);
+            font-family: 'Noto Serif TC', serif;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* 電影質感層 */
+        .film-grain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 999; opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        .letterbox {
+            position: fixed; left: 0; width: 100%; height: 7vh;
+            background: #000; z-index: 1000;
+        }
+
+        /* --- 第一頁：全幅圖片設計 --- */
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-image: var(--photo-1);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+        }
+
+        .hero-title {
+            position: relative; z-index: 10; text-align: center;
+        }
+
+        .hero-title h1 {
+            font-size: clamp(4rem, 12vw, 8rem);
+            font-weight: 900; letter-spacing: 0.3em;
+            text-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        /* --- 第二至五頁：畫框樣式設計 --- */
+        section:not(.hero-section) {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 10vh 8vw;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .container {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center; gap: 5%;
+            width: 100%;
+        }
+
+        .content-left { flex-direction: row; }
+        .content-right { flex-direction: row-reverse; }
+
+        .text-area { flex: 1; }
+        .image-area { flex: 1; display: flex; justify-content: center; }
+
+        .photo-frame {
+            background-color: var(--paper-white);
+            padding: 15px 15px 60px 15px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            transform: rotate(-2deg);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            max-width: 450px; width: 100%;
+        }
+
+        .photo-frame:hover { transform: rotate(0deg) scale(1.05); }
+
+        .photo-frame .img-placeholder {
+            width: 100%; aspect-ratio: 4/3;
+            background-size: cover; background-position: center;
+            border: 1px solid #ddd;
+        }
+
+        .photo-caption {
+            margin-top: 20px; text-align: center;
+            color: #333; font-family: 'Noto Sans TC', sans-serif;
+            font-size: 0.85rem; letter-spacing: 2px; font-weight: bold;
+        }
+
+        /* --- 內容細節 --- */
+        h2 {
+            font-size: 2.8rem; color: var(--cinematic-gold);
+            margin-bottom: 1.5rem; letter-spacing: 3px;
+        }
+
+        p {
+            font-size: 1.25rem; color: #bbb; text-align: justify;
+            margin-bottom: 1.5rem;
+        }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- 頁尾按鈕樣式 --- */
+        .footer-link {
+            display: inline-block;
+            color: var(--cinematic-gold);
+            text-decoration: none;
+            border: 1px solid var(--cinematic-gold);
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            background-color: var(--cinematic-gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        @media (max-width: 900px) {
+            .container { flex-direction: column !important; gap: 3rem; }
+            .photo-frame { transform: rotate(0); max-width: 100%; }
+            .footer-link { width: 100%; max-width: 300px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="film-grain"></div>
+    <div class="letterbox" style="top:0;"></div>
+    <div class="letterbox" style="bottom:0;"></div>
+
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-title">
+            <h1 class="reveal">光榮</h1>
+            <p class="reveal" style="letter-spacing: 8px; font-size: 1.2rem; color: var(--cinematic-gold);">GUANGRONG EPISODES</p>
+            <p class="reveal" style="margin-top: 20px; font-style: italic;">滾動膠卷，回溯三重的記憶</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="container content-left">
+            <div class="text-area">
+                <h2 class="reveal">第二章：水岸的記憶</h2>
+                <p class="reveal">三重埔的生命力，源自於那條靜靜流淌的淡水河。光榮國小座落於此，不僅見證了城市的變遷，更承載了無數家庭對未來的寄託。</p>
+                <p class="reveal">我們在堤防邊奔跑，在河風中成長，這裡是夢想最原始的起點。</p>
+            </div>
+            <div class="image-area reveal">
+                <div class="photo-frame">
+                    <div class="img-placeholder" style="background-image: var(--photo-2);"></div>
+                    <div class="photo-caption">CHAPTER 02: THE RIVER ROOTS</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background-color: #0c0c0c;">
+        <div class="container content-right">
+            <div class="text-area">
+                <h2 class="reveal">第三章：晨曦下的紅磚</h2>
+                <p class="reveal">鐘聲響起，打破了清晨的寧靜。紅磚牆影隨著太陽移動，記錄著每節課的流逝。</p>
+                <p class="reveal">教室裡的讀書聲，走廊上的嬉鬧聲，這些平凡的日常，在多年後回首，都是最耀眼的光榮時刻。</p>
+            </div>
+            <div class="image-area reveal">
+                <div class="photo-frame" style="transform: rotate(2deg);">
+                    <div class="img-placeholder" style="background-image: var(--photo-3);"></div>
+                    <div class="photo-caption">CHAPTER 03: DAILY ECHOES</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container content-left">
+            <div class="text-area">
+                <h2 class="reveal">第四章：紅土上的頑強</h2>
+                <p class="reveal">如果有一種顏色能代表光榮，那一定是操場上那抹深沉的紅土色。體育班的孩子們用汗水澆灌這片土地，學會了不服輸的韌性。</p>
+                <p class="reveal">每一次揮棒、每一次衝刺，都是三重人草根精神的縮影。</p>
+            </div>
+            <div class="image-area reveal">
+                <div class="photo-frame">
+                    <div class="img-placeholder" style="background-image: var(--photo-4);"></div>
+                    <div class="photo-caption">CHAPTER 04: THE SPIRIT</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background-color: #0c0c0c;">
+        <div class="container content-right">
+            <div class="text-area">
+                <h2 class="reveal">第五章：未完的膠卷</h2>
+                <p class="reveal">教育是一場馬拉松，是一場跨越世代的接力。我們從前輩手中接過火炬，在現代的浪潮中繼續寫下新的篇章。</p>
+                <p class="reveal">光榮的故事不會結束，因為每一位走出校門的孩子，都是這部電影最生動的續集。</p>
+            </div>
+            <div class="image-area reveal">
+                <div class="photo-frame" style="transform: rotate(-1deg);">
+                    <div class="img-placeholder" style="background-image: var(--photo-5);"></div>
+                    <div class="photo-caption">CHAPTER 05: TO BE CONTINUED</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="padding: 80px 0; background-color: #000; color: #888; font-family: 'Noto Sans TC', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="reveal" style="margin-bottom: 30px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+            <a href="https://www.gres.ntpc.edu.tw/" target="_blank" class="footer-link">學校官方網站</a>
+            <a href="https://www.facebook.com/guangrong107/?locale=zh_TW" target="_blank" class="footer-link">官方 FB 粉絲專頁</a>
+        </div>
+        <p class="reveal" style="text-align: center; margin: 0; width: 100%;">翊華程式設計 | 網頁與作品及製作</p>
+    </footer>
+
+    <script>
+        // 自動觸發滾動動畫
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // 簡單的視差效果
+        window.addEventListener('scroll', () => {
+            const scroll = window.pageYOffset;
+            document.querySelector('.hero-section').style.backgroundPositionY = -(scroll * 0.2) + 'px';
+        });
+    </script>
+</body>
+</html>
